@@ -1,0 +1,21 @@
+service: packetpub-telegram-bot
+frameworkVersion: '3'
+useDotenv: true
+
+provider:
+  name: aws
+  region: us-east-2
+  runtime: nodejs12.x
+  environment:
+    ID_TELEGRAM_BOT: ${env:ID_TELEGRAM_BOT}
+    ID_TELEGRAM_CHAT: ${env:ID_TELEGRAM_CHAT}
+
+functions:
+  PacketPubTelegramBot:
+    handler: handler.PacketPubTelegramBot
+    events:
+      - schedule:
+          name: packetpub-telegram-bot-trigger-cron
+          description: 'Event Trigger to catch Free Ebook Info and send to Telegram Api'
+          rate: cron(0 8 * * ? *)
+          enabled: true
