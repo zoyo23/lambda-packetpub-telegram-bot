@@ -13,10 +13,7 @@ module.exports.PacketPubTelegramBot = async (event, context, callback) => {
 
   console.log(`----------------------------------------`);
   console.log(`----- GET PRODUCT ID -----`);
-  console.log(htmlPacktPub.data);
-
   let productId = GetProductIdByHtml(htmlPacktPub.data);
-  console.log(`PRODUCT ID : ${productId}`);
   console.log(`----- GET PRODUCT ID SUCCESS  -----`);
   console.log(`----------------------------------------`);
 
