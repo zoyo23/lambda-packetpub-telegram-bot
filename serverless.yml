@@ -9,6 +9,9 @@ provider:
   environment:
     ID_TELEGRAM_BOT: ${env:ID_TELEGRAM_BOT}
     ID_TELEGRAM_CHAT: ${env:ID_TELEGRAM_CHAT}
+  tags:
+    env: dev
+    project: PacketPubTelegramBot
 
 functions:
   PacketPubTelegramBot:

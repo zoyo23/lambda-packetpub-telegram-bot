@@ -3,45 +3,47 @@ const { GetProductIdByHtml, GetBookInfoMessage } = require('./helper');
 const ID_BOT = process.env.ID_TELEGRAM_BOT;
 const ID_CHAT = process.env.ID_TELEGRAM_CHAT;
 
-module.exports.PacketPubTelegramBot = (event, context, callback) => {
-  request.get('https://www.packtpub.com/free-learning')
-    .then(({ data: htmlPacktPub }) => {
+module.exports.PacketPubTelegramBot = async (event, context, callback) => {
 
-      console.log(`----------------------------------------`)
-      console.log(`----- GET PRODUCT ID -----`)
-      let productId = GetProductIdByHtml(htmlPacktPub);
-      console.log(`PRODUCT ID : ${productId}`)
-      console.log(`----- GET PRODUCT SUCCESS  -----`)
-      console.log(`----------------------------------------`)
+  console.log(`----------------------------------------`);
+  console.log(`----- GET HTML FREE LEARNING -----`);
+  let htmlPacktPub = await request.get('https://www.packtpub.com/free-learning');
+  console.log(`----- GET HTML FREE LEARNING SUCESS -----`);
+  console.log(`----------------------------------------`);
 
-      request.get(`https://static.packt-cdn.com/products/${productId}/summary`)
-        .then(({ data: productsApiResponse }) => {
+  console.log(`----------------------------------------`);
+  console.log(`----- GET PRODUCT ID -----`);
+  console.log(htmlPacktPub.data);
 
-          console.log(`----------------------------------------`)
-          console.log(`----- GET PRODUCT INFO MESSSAGE -----`)
-          let infoMessage = GetBookInfoMessage(productsApiResponse);
-          console.log(`INFO MESSSAGE : ${infoMessage}`)
-          console.log(`----- GET PRODUCT INFO MESSSAGE SUCCESS -----`)
-          console.log(`----------------------------------------`)
+  let productId = GetProductIdByHtml(htmlPacktPub.data);
+  console.log(`PRODUCT ID : ${productId}`);
+  console.log(`----- GET PRODUCT ID SUCCESS  -----`);
+  console.log(`----------------------------------------`);
 
-          request.post(`https://api.telegram.org/bot${ID_BOT}/sendPhoto`,
-            {
-              "chat_id": ID_CHAT,
-              "parse_mode": "HTML",
-              "photo": `https://static.packt-cdn.com/products/${productId}/cover/smaller`,
-              "caption": infoMessage,
-              "disable_web_page_preview": false,
-              "disable_notification": false,
-              "reply_to_message_id": ""
-            })
-            .then(({ data: sendMessageResponse }) => {
-              console.log(sendMessageResponse);
-            })
-            .catch(callback);
-        })
-        .catch(callback);
+  console.log(`----------------------------------------`);
+  console.log(`----- GET PRODUCT INFO BY ID -----`);
+  let productsApiResponse = await request.get(`https://static.packt-cdn.com/products/${productId}/summary`);
+  console.log(`----- GET PRODUCT INFO BY ID SUCCESS -----`);
+  console.log(`----------------------------------------`);
 
-      callback(productId);
-    })
-    .catch(callback);
+  console.log(`----------------------------------------`);
+  console.log(`----- GET PRODUCT INFO MESSSAGE -----`);
+  let infoMessage = GetBookInfoMessage(productsApiResponse.data);
+  console.log(`----- GET PRODUCT INFO MESSSAGE SUCCESS -----`);
+  console.log(`----------------------------------------`);
+
+  console.log(`----------------------------------------`);
+  console.log(`----- SEND INFO MESSSAGE TO TELEGRAM -----`);
+  let sendMessageResponse = await request.post(`https://api.telegram.org/bot${ID_BOT}/sendPhoto`,
+    {
+      "chat_id": ID_CHAT,
+      "parse_mode": "HTML",
+      "photo": `https://static.packt-cdn.com/products/${productId}/cover/smaller`,
+      "caption": infoMessage,
+      "disable_web_page_preview": false,
+      "disable_notification": false,
+      "reply_to_message_id": ""
+    });
+  console.log(`----- SEND INFO MESSSAGE TO TELEGRAM SUCCESS -----`);
+  console.log(`----------------------------------------`);
 };
